@@ -1,0 +1,48 @@
+name: Feature
+description: New capability or change in behavior.
+title: "feat: "
+labels: ["enhancement", "needs-plan"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What need or pain does this address? Include business context.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Starting point for the solution. The plan comment will refine it.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Observable outcomes that mean this is done.
+    validations:
+      required: true
+  - type: textarea
+    id: questions
+    attributes:
+      label: Open questions
+      description: Unresolved decisions, dependencies, or risks.
+    validations:
+      required: false
+  - type: dropdown
+    id: repos
+    attributes:
+      label: Affected repositories (hint)
+      description: Optional. The planning agent decides the final list from each system.yaml.
+      multiple: true
+      options:
+        - brillipoint-api
+        - brillipoint-front
+        - brillipoint-print-server
+        - BrillipointPhotobook-
+        - photos-scripts
+        - brillipoint-ops
+    validations:
+      required: false

@@ -1,0 +1,39 @@
+name: Chore
+description: Maintenance, tooling, dependencies, or cleanup with no behavior change.
+title: "chore: "
+labels: ["chore", "needs-plan"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: What is in and out of scope.
+    validations:
+      required: false
+  - type: dropdown
+    id: repos
+    attributes:
+      label: Affected repositories (hint)
+      description: Optional. The planning agent decides the final list from each system.yaml.
+      multiple: true
+      options:
+        - brillipoint-api
+        - brillipoint-front
+        - brillipoint-print-server
+        - BrillipointPhotobook-
+        - photos-scripts
+        - brillipoint-ops
+    validations:
+      required: false

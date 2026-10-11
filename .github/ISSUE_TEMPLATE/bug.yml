@@ -1,0 +1,52 @@
+name: Bug
+description: Something is broken or behaves unexpectedly.
+title: "fix: "
+labels: ["bug", "needs-plan"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: local / staging / production, event token, device, browser, etc.
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Logs, screenshots, request/response. Remove secrets and personal data.
+    validations:
+      required: false
+  - type: dropdown
+    id: repos
+    attributes:
+      label: Affected repositories (hint)
+      description: Optional. The planning agent decides the final list from each system.yaml.
+      multiple: true
+      options:
+        - brillipoint-api
+        - brillipoint-front
+        - brillipoint-print-server
+        - BrillipointPhotobook-
+        - photos-scripts
+        - brillipoint-ops
+    validations:
+      required: false
