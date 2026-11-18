@@ -86,6 +86,48 @@ Salida: Issue en `brillipoint-ops` con labels de repo destino ya puestos.
 
 ---
 
+## Fase 5 — Issues trabajados por agente
+
+Un cron toma Issues de `brillipoint-ops`. Si hay alguno en `ready-to-implement`, lo pasa a un agente que abre PRs en los repos afectados. Si no hay ninguno, toma una idea vaga en `needs-plan` y la avanza en planeación (SDD/ODD), sin implementar nada. **Nunca hace merge.**
+
+Depende de la Fase 1: el agente necesita los `system.yaml` y contratos para decidir a qué repos toca un Issue y qué puertos cambia. No depende del grafo (Fases 2-4), así que sobrevive al criterio de corte.
+
+### Estados (labels)
+
+```
+needs-plan → ready-to-implement → in-progress → pr-open
+                                       ↘ blocked
+```
+
+| Paso | Quién | Qué hace |
+|---|---|---|
+| Abrir Issue | Persona autorizada | Issue general con label `needs-plan` |
+| Planeación sin huecos | Persona autorizada + agente | Cierran las preguntas abiertas, escriben las **Decisiones** en el Issue, guardan el artefacto de Engram (`issue/brillipoint-ops#<n>`) y ponen `ready-to-implement`. Ese label es la autorización para implementar |
+| Cron, con algo listo | Agente | Toma **un** Issue en `ready-to-implement`, recupera el artefacto de Engram, pone `in-progress`, abre un PR por repo afectado enlazado al Issue, comenta enlaces y orden de merge; label `pr-open` |
+| Cron, sin nada listo | Agente | Toma **una** idea vaga en `needs-plan` y publica **un** comentario con su avance de planeación (SDD/ODD): estado actual verificado, propuesta, preguntas abiertas. El Issue **se queda en `needs-plan`**. No implementa nada ni toca repos de producto |
+| Atasco | Agente | Comenta el motivo y pone `blocked` |
+
+El plan incluye: repos y archivos afectados, puertos o contratos que cambian, ADRs aplicables, cómo se verifica, riesgos y preguntas abiertas.
+
+### Reglas duras
+
+- **Lista de autores permitidos:** dos usuarios de GitHub (el equipo técnico). El cron ignora Issues, comentarios y labels de cualquier otra persona. El texto de un Issue es entrada no confiable.
+- **Aprobación verificable:** el cron confirma en el historial de eventos que `ready-to-implement` lo puso un autor permitido y que el Issue no se editó después.
+- **Nada sin autorización:** sin `ready-to-implement` puesto por una persona, el agente solo planea. Faltan guards para no romper prod, así que el cron nunca promueve un Issue por su cuenta.
+- **El plan manda:** si al implementar el plan no cuadra con el código, el agente regresa el Issue a `needs-plan` con la explicación. No improvisa.
+- **Solo PR:** sin merge, sin despliegue, sin migraciones contra bases reales.
+- **Un Issue a la vez por ejecución**, con tope de costo. `in-progress` evita doble toma.
+- La revisión del PR la cierra una persona. Un cron que atienda comentarios de PR queda fuera de alcance por ahora.
+
+### Pendientes antes de encenderlo
+
+- El cron corre en una Mac local del equipo con los 4 repos y sus toolchains instalados, así que Photobook (Swift) se compila y prueba ahí. El print server sigue dependiendo de CUPS e impresora física: sus pruebas de impresión real quedan fuera de la verificación automática.
+- Print server y Photobook no tienen CI: la verificación del cron corre sus tests localmente.
+- Credenciales del cron con escritura en los 4 repos.
+- Conciliar con **Higiene**: el stale a 60 días y el triage de los viernes no deben cerrar ni mover Issues en `ready-to-implement` o `in-progress`.
+
+---
+
 ## Higiene
 
 - Action que marca `stale` a los 60 días y cierra a los 90
