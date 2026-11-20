@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Base de datos local poblada y sanitizada para un worktree de bookandsign-api.
 #
-#   scripts/wt-db.sh create <issue>   crea bookandsign_dev_issue_<n>, corre migraciones y el seeder
+#   scripts/wt-db.sh create <issue>   copia los .env (wt-env.sh), crea bookandsign_dev_issue_<n>, migra y siembra
 #   scripts/wt-db.sh drop <issue>     borra esa base
 #   scripts/wt-db.sh status <issue>   cuenta filas de tablas clave
 #
@@ -43,6 +43,8 @@ case "$cmd" in
 
   create)
     [[ -f "$wt/package.json" ]] || die "no existe el worktree $wt"
+    # Copia y aísla los .env del worktree (y crea su base de pruebas) antes de migrar.
+    "$root/scripts/wt-env.sh" "$n"
     node_dir="$HOME/.nvm/versions/node/$(tr -d '[:space:]' < "$wt/.nvmrc")/bin"
     [[ -x "$node_dir/node" ]] || die "falta Node de .nvmrc en $node_dir (nvm install)"
     export PATH="$node_dir:$PATH"
