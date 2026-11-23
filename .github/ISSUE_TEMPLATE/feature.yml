@@ -31,6 +31,13 @@ body:
       description: Unresolved decisions, dependencies, or risks.
     validations:
       required: false
+  - type: textarea
+    id: decisions
+    attributes:
+      label: Decisiones
+      description: Filled during planning, dated. Binding choices only (scope, data model, migrations, cross-repo contract). Implementation guides live in Engram, not here.
+    validations:
+      required: false
   - type: dropdown
     id: repos
     attributes:

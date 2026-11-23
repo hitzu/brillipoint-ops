@@ -14,9 +14,13 @@ Los repos de producto son hermanos de este (`../bookandsign-api`, `../bookandsig
 2. Investiga lo mínimo en los repos afectados: qué existe ya (endpoints, pantallas, entidades), qué falta, qué restricciones hay. Cita paths reales. No inventes.
 3. Elige el tipo de issue según `.github/ISSUE_TEMPLATE/` (`feature.yml`, `bug.yml`, `chore.yml`) y respeta sus secciones y su prefijo de título (`feat: `, etc.).
 4. Genera el `.md` del issue. Si el usuario lo pide, publícalo con `gh issue create` en el repo indicado. Un issue nuevo nace con `needs-plan`.
-5. **Planeación obligatoria.** Con el usuario, resuelve cada pregunta abierta hasta que no quede ningún hueco que cambie el alcance, el contrato entre repos o el modelo de datos. Cada decisión se escribe en el issue (sección **Decisiones**, con fecha) y lo descartado se anota con su razón.
+5. **Planeación obligatoria.** Con el usuario, resuelve cada pregunta abierta hasta que no quede ningún hueco que cambie el alcance, el contrato entre repos o el modelo de datos. Son dos discusiones, en este orden:
+   1. **Producto (PRD, en el issue):** problema, alcance y criterios de aceptación. Cada decisión se escribe en el issue (sección **Decisiones**, con fecha) y lo descartado se anota con su razón.
+   2. **Técnica (TDD, en Engram):** cómo se construye, escrito como **Guías** (ver "Decisiones y Guías"). Muéstrale las Guías al usuario en el chat y ajústalas con él antes de guardarlas.
+
+   En **bugs** la discusión técnica es opcional: basta la causa verificada y dónde se corrige. Si el fix toca una Decisión (modelo de datos, migraciones o contrato entre repos), se planea igual que un feature.
 6. **Marcar como listo.** Solo cuando no queden huecos y el usuario lo confirme:
-   1. Guarda el artefacto de Engram del issue (ver abajo).
+   1. Guarda el artefacto de Engram del issue con las Guías aprobadas (ver abajo).
    2. Agrega al cuerpo del issue la sección **Contexto en Engram** con el `topic_key` y el proyecto.
    3. Cambia el label `needs-plan` por `ready-to-implement`.
 
@@ -35,7 +39,27 @@ Solo aplica a un issue `ready-to-implement` y con autorización explícita. El c
 
 - `needs-plan`: idea capturada, todavía con huecos. **Ningún agente la implementa.**
 - `ready-to-implement`: planeada, sin huecos, con artefacto de Engram. Es lo único que un agente (o el cron) puede tomar para implementar.
-- Si un agente que implementa descubre que el plan no cuadra con el código, regresa el issue a `needs-plan` con un comentario que explique el hueco. No improvisa.
+- Si una **Decisión** no cuadra con el código, el agente que implementa regresa el issue a `needs-plan` con un comentario que explique el hueco. No improvisa. Si lo que no cuadra es una **Guía**, se desvía y lo justifica en el PR.
+
+## Decisiones y Guías
+
+El plan tiene dos niveles de compromiso. Quien planea investiga a fondo y deja el mapa; quien implementa lo verifica contra el código, no lo transcribe.
+
+- **Decisiones (vinculantes, en el issue):** lo caro de revertir: alcance, modelo de datos, migraciones y contrato entre repos. El ejecutor no las cambia.
+- **Guías (hipótesis, en Engram):** el cómo local: dónde va el cambio, qué forma darle, qué reutilizar. El ejecutor las verifica y puede desviarse si lo justifica.
+
+Formato de cada Guía:
+
+```
+G<n> · confianza: alta (leída en el código) | media (inferida) | baja (supuesta)
+Propongo: <qué cambiar> en <archivo> / <símbolo>
+Por qué ahí: <evidencia> (leído en <repo>@<commit>)
+La invalida: <qué tendría que encontrar el ejecutor para descartarla>
+```
+
+- Ancla por símbolo (función, clase, componente), no por número de línea: las líneas cambian entre planear e implementar.
+- Una Guía no trae el código hecho. Si para escribirla hace falta implementar, es demasiado detallada.
+- "Puerto" significa lo que define `docs/ports.md` (HTTP entre repos). Para arquitectura hexagonal usa "interfaz de dominio" y "adapter".
 
 ## Artefacto de Engram
 
@@ -44,9 +68,10 @@ Es el contexto que el agente que implemente no puede reconstruir solo leyendo el
 - Proyecto: `brillipoint-ops`. `topic_key`: `issue/brillipoint-ops#<número>` (por ejemplo, `issue/brillipoint-ops#3`). Si el issue cambia después, actualiza el mismo `topic_key`; no crees otro.
 - Contenido:
   - Enlace al issue.
-  - Decisiones con su razón.
+  - La razón de cada Decisión (la Decisión vive en el issue; aquí va el porqué).
+  - Las Guías (TDD), en el formato de "Decisiones y Guías".
   - Alternativas descartadas y por qué.
-  - Evidencia verificada (paths y líneas en cada repo, branches relevantes).
+  - Evidencia verificada (paths y símbolos en cada repo, commit base con el que se planeó, branches relevantes).
   - Riesgos aceptados.
   - Orden sugerido entre repos.
 - El agente que tome el issue primero busca ese `topic_key` en Engram (`mem_search`, luego `mem_get_observation`) y después lee el issue. Si hay contradicción, manda el issue.
@@ -58,6 +83,7 @@ Es el contexto que el agente que implemente no puede reconstruir solo leyendo el
 - **Criterios de aceptación** observables.
 - **Estado actual verificado**: qué ya existe en el código (con path) y qué falta. Ejemplo: "la API de promociones ya expone CRUD completo; el front solo tiene el listado".
 - **Preguntas abiertas** y riesgos.
+- **Decisiones** (se llenan al planear, con fecha). Las Guías técnicas no van en el issue: van en Engram.
 - **Repos afectados** (pista; el agente que planee decide la lista final con cada `system.yaml`).
 
 ## Reglas

@@ -19,9 +19,11 @@ Este archivo es lo que ejecuta el agente que implementa Issues. Corre en la máq
 
 ## Pasos
 
-1. **Contexto.** `mem_search` en Engram, proyecto `brillipoint-ops`, `topic_key` `issue/brillipoint-ops#<n>`, y `mem_get_observation`. Luego leer el Issue completo. Si se contradicen, manda el Issue.
+1. **Contexto.** `mem_search` en Engram, proyecto `brillipoint-ops`, `topic_key` `issue/brillipoint-ops#<n>`, y `mem_get_observation`; el artefacto trae las Guías (ver "Decisiones y Guías" en `CLAUDE.md`). Luego leer el Issue completo. Si se contradicen, manda el Issue.
 2. **Reclamar.** Cambiar `ready-to-implement` por `in-progress`.
-3. **Validar el plan contra el código.** Verificar cada path y línea citados. Si no cuadra, volver a `needs-plan` con un comentario que explique el hueco y parar. No improvisar.
+3. **Validar el plan contra el código.** Verificar cada Decisión y cada Guía.
+   - Si una **Decisión** no cuadra (alcance, modelo de datos, migraciones o contrato entre repos), volver a `needs-plan` con un comentario que explique el hueco y parar. No improvisar.
+   - Si una **Guía** no cuadra o se cumple su condición "La invalida", desviarse y anotar el desvío y su razón. No es motivo para volver a `needs-plan`.
 4. **Criterios no automatizables.** Separar los criterios que exigen dispositivo físico, simulador interactivo o decisión humana. Se declaran en el PR como **pendientes humanos**; el agente no los marca como cumplidos.
 5. **Worktrees.** Un worktree por repo afectado en `<repo-padre>/<repo>-worktrees/issue-<n>-port-<4000+n>`, rama `feat/issue-<n>-<slug>`. El puerto es el `PORT` del servidor de ese worktree (la API lo lee en `src/main.ts`, por defecto 3000). La API usa `4000+<n>` y el front `5000+<n>` (su `dev` fija `-p 4000`; se arranca con `yarn dev -p <5000+n>`), para que ambos convivan en la misma máquina: issue 3 → API `4003`, front `5003`.
    - **Front contra el API del worktree:** `scripts/wt-front-env.sh <n>` escribe `NEXT_PUBLIC_API_URL` en el `.env.local` del front del issue: apunta a `http://localhost:<4000+n>` si el API de ese worktree está escuchando y, si no, avisa y usa `http://localhost:3000`. `.env.local` gana sobre `.env`, que el agente no lee.
@@ -30,8 +32,8 @@ Este archivo es lo que ejecuta el agente que implementa Issues. Corre en la máq
    - Si el worktree ya existe, reanudar en él; no recrearlo.
 6. **Implementar por orden de dependencia** entre repos (contrato antes que consumidores). Commits convencionales, sin atribución de IA, con pruebas y documentación junto al código.
 7. **Verificar** con los comandos de la tabla de abajo. Anotar resultado real; lo que no se pudo correr se declara como no verificado.
-8. **Publicar.** Push de la rama del worktree (no de `main`), un PR por repo enlazado al Issue (`Refs hitzu/...#<n>`), con: qué cambia, cómo se verificó, pendientes humanos y orden de merge entre PRs.
-9. **Cerrar.** Comentar en el Issue los enlaces y cambiar `in-progress` por `pr-open`. Guardar en Engram (mismo `topic_key`) lo aprendido y los huecos del contrato.
+8. **Publicar.** Push de la rama del worktree (no de `main`), un PR por repo enlazado al Issue (`Refs hitzu/...#<n>`), con: qué cambia, cómo se verificó, desvíos de Guías con su razón, pendientes humanos y orden de merge entre PRs.
+9. **Cerrar.** Comentar en el Issue los enlaces y cambiar `in-progress` por `pr-open`. Guardar en Engram (mismo `topic_key`) lo aprendido, qué Guías se sostuvieron y cuáles se descartaron, y los huecos del contrato.
 10. **Atasco.** Comentar el motivo concreto, poner `blocked`, parar.
 
 ## Verificación por repo
