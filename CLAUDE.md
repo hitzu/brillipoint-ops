@@ -23,6 +23,12 @@ Los repos de producto son hermanos de este (`../bookandsign-api`, `../bookandsig
    1. Guarda el artefacto de Engram del issue con las Guías aprobadas (ver abajo).
    2. Agrega al cuerpo del issue la sección **Contexto en Engram** con el `topic_key` y el proyecto.
    3. Cambia el label `needs-plan` por `ready-to-implement`.
+7. **Cierre.** Cuando lo implementado quedó integrado y el usuario lo confirma:
+   1. Agrega al issue la sección **Cierre** (3 a 5 líneas): qué se entregó, en qué se desvió de las Guías y por qué, y los commits o PRs de cada repo. Las Decisiones no se reescriben: si cambiaron, se anota con fecha en **Decisiones**.
+   2. Actualiza el **mismo** `topic_key` de Engram con un bloque **Cierre**: desvíos respecto a las Guías, y una línea `Buscar por:` con 5 a 10 términos que alguien usaría para llegar aquí (nombre de la funcionalidad, símbolos y paths clave, sinónimos en español e inglés). Sin esa línea, `mem_search` no encuentra el artefacto.
+   3. En **Contexto en Engram** (cuerpo del issue) deja el `topic_key` ya existente; en el **Cierre** repítelo, para saltar del issue a Engram en un paso.
+   4. Si pasa el filtro de ADR (caro de revertir **y** va a condicionar issues futuros), escribe `docs/adr/NNNN-slug.md` (máx. ~15 líneas: contexto, decisión, consecuencias, link al issue) y una línea en `docs/adr/README.md`. Sin hallazgos de seguridad: el repo es público.
+   5. Quita `ready-to-implement` y cierra el issue.
 
 ## Iniciar la implementación de un issue (worktrees)
 
