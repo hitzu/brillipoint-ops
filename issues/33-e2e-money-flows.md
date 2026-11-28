@@ -19,7 +19,7 @@ También es la red que necesitan los agentes que implementan issues: con un smok
 - **Front:**
   - Next 14 con pages router. Tests con `vitest` (`yarn test`) y un runner propio para la fiesta (`yarn test:party`, `scripts/run-party-tests.mjs`). No hay Playwright ni Cypress.
   - El CI (`.github/workflows/ci-cd.yml`) corre en push y en PR: instala, construye y despliega a Vercel. **No corre ningún test.**
-  - Rutas de los flujos: `src/pages/reserva/[token].tsx`, `src/pages/contracts-add.tsx`, `src/pages/contracts/index.tsx` (con `PaymentsModal`), `src/pages/fiesta/[eventToken].tsx`, `src/pages/party/[token].tsx`, `src/pages/part/[token].tsx` y `src/pages/mis-fotos/[sessionToken].tsx`.
+  - Rutas de los flujos: `src/pages/reserva/[token].tsx`, `src/pages/contracts-add.tsx`, `src/pages/contracts/index.tsx` (con `PaymentsModal`), `src/pages/fiesta/[eventToken].tsx` y `src/pages/mis-fotos/[sessionToken].tsx` (`/party` y `/part` se eliminaron en #39).
 - **API:**
   - Jest unitario (`pnpm run test`), e2e con Jest (`pnpm run test:e2e`, `test/contracts.e2e-spec.ts`) y e2e con Bruno (`pnpm run test:e2e:bruno`, `scripts/run-bruno-e2e.sh`).
   - El CI (`.github/workflows/pipeline-main.yml`) levanta `postgres:17-alpine`, corre las migraciones, construye y corre los tests unitarios.
